@@ -111,6 +111,11 @@ func (i *Interpreter) runExpression(ctx context.Context, expr ast.Expression) (i
 			return count, fmt.Errorf("%w: %d to memory underflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
 		}
 		i.Memory[i.Pointer] -= 1
+	case *ast.MultipleValueDecrementExpression:
+		if i.Memory[i.Pointer] == 255 && i.Config.RaiseErrorOnOverflow {
+			return count, fmt.Errorf("%w: %d to memory overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+		}
+		i.Memory[i.Pointer] -= byte(e.Count)
 	case *ast.OutputExpression:
 		if _, err := i.Config.Writer.Write([]byte{i.Memory[i.Pointer]}); err != nil {
 			return count, err

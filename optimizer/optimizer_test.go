@@ -19,7 +19,6 @@ func TestOptimizer(t *testing.T) {
 			source:  "+++++----->>>>><<<<<",
 			expected: &ast.Program{
 				Expressions: []ast.Expression{
-					
 					&ast.MultipleValueIncrementExpression{
 						Count: 5,
 						Expressions: []ast.Expression{
@@ -30,11 +29,16 @@ func TestOptimizer(t *testing.T) {
 							&ast.ValueIncrementExpression{Pos: 4},
 						},
 					},
-					&ast.ValueDecrementExpression{Pos: 5},
-					&ast.ValueDecrementExpression{Pos: 6},
-					&ast.ValueDecrementExpression{Pos: 7},
-					&ast.ValueDecrementExpression{Pos: 8},
-					&ast.ValueDecrementExpression{Pos: 9},
+					&ast.MultipleValueDecrementExpression{
+						Count: 5,
+						Expressions: []ast.Expression{
+							&ast.ValueDecrementExpression{Pos: 5},
+							&ast.ValueDecrementExpression{Pos: 6},
+							&ast.ValueDecrementExpression{Pos: 7},
+							&ast.ValueDecrementExpression{Pos: 8},
+							&ast.ValueDecrementExpression{Pos: 9},
+						},
+					},
 					&ast.MultiplePointerIncrementExpression{
 						Count: 5,
 						Expressions: []ast.Expression{
