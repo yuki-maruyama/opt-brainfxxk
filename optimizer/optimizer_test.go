@@ -19,19 +19,14 @@ func TestOptimizer(t *testing.T) {
 			source:  "+++++----->>>>><<<<<",
 			expected: &ast.Program{
 				Expressions: []ast.Expression{
-					&ast.MultipleValueIncrementExpression{
-						Count: 5,
+					&ast.ValueChangeExpression{
+						Count: 0,
 						Expressions: []ast.Expression{
 							&ast.ValueIncrementExpression{Pos: 0},
 							&ast.ValueIncrementExpression{Pos: 1},
 							&ast.ValueIncrementExpression{Pos: 2},
 							&ast.ValueIncrementExpression{Pos: 3},
 							&ast.ValueIncrementExpression{Pos: 4},
-						},
-					},
-					&ast.MultipleValueDecrementExpression{
-						Count: 5,
-						Expressions: []ast.Expression{
 							&ast.ValueDecrementExpression{Pos: 5},
 							&ast.ValueDecrementExpression{Pos: 6},
 							&ast.ValueDecrementExpression{Pos: 7},

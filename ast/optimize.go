@@ -124,3 +124,28 @@ func (e *MultipleValueDecrementExpression) Bytes() []byte {
 func (e *MultipleValueDecrementExpression) String() string {
 	return string(e.Bytes())
 }
+
+type ValueChangeExpression struct {
+	Count       int
+	Expressions []Expression
+}
+
+func (e *ValueChangeExpression) StartPos() int {
+	return e.Expressions[0].StartPos()
+}
+
+func (e *ValueChangeExpression) EndPos() int {
+	return e.Expressions[len(e.Expressions)-1].EndPos()
+}
+
+func (e *ValueChangeExpression) Bytes() []byte {
+	b := []byte{}
+	for _, expr := range e.Expressions {
+		b = append(b, expr.Bytes()...)
+	}
+	return b
+}
+
+func (e *ValueChangeExpression) String() string {
+	return string(e.Bytes())
+}

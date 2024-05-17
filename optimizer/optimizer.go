@@ -61,28 +61,28 @@ func (o *Optimizer) optimizeExpressions(exprs []ast.Expression) ([]ast.Expressio
 
 		case *ast.ValueIncrementExpression:
 			if len(optimized) > 0 {
-				if last, ok := optimized[len(optimized)-1].(*ast.MultipleValueIncrementExpression); ok {
+				if last, ok := optimized[len(optimized)-1].(*ast.ValueChangeExpression); ok {
 					last.Count += 1
 					last.Expressions = append(last.Expressions, optExpr)
 					continue
 				}
 			}
 
-			optExpr = &ast.MultipleValueIncrementExpression{
+			optExpr = &ast.ValueChangeExpression{
 				Count:       1,
 				Expressions: []ast.Expression{optExpr},
 			}
 		case *ast.ValueDecrementExpression:
 			if len(optimized) > 0 {
-				if last, ok := optimized[len(optimized)-1].(*ast.MultipleValueDecrementExpression); ok {
-					last.Count += 1
+				if last, ok := optimized[len(optimized)-1].(*ast.ValueChangeExpression); ok {
+					last.Count -= 1
 					last.Expressions = append(last.Expressions, optExpr)
 					continue
 				}
 			}
 
-			optExpr = &ast.MultipleValueDecrementExpression{
-				Count:       1,
+			optExpr = &ast.ValueChangeExpression{
+				Count:       -1,
 				Expressions: []ast.Expression{optExpr},
 			}
 		}
