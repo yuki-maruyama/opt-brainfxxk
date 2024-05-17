@@ -102,7 +102,22 @@ func (o *Optimizer) optimizeExpressions(exprs []ast.Expression) ([]ast.Expressio
 			if err != nil {
 				return nil, err
 			}
-			optExpr.(*ast.WhileExpression).Body = opBody
+
+			if len(opBody) == 1{
+				switch e := opBody[0].(type){
+					case *ast.PointerMoveExpression:
+						optExpr = &ast.ZeroSearchExpression{
+							StartPosition: optExpr.(*ast.WhileExpression).StartPos(),
+							EndPosition: optExpr.(*ast.WhileExpression).EndPos(),
+	
+							SearchWindow: e.Count,
+						}
+					
+					default:
+				}
+			} else {
+				optExpr.(*ast.WhileExpression).Body = opBody
+			}
 		}
 
 		optimized = append(optimized, optExpr)

@@ -70,6 +70,49 @@ func TestOptimizer(t *testing.T) {
 				},
 			},
 		},
+		{
+			source: ">>+>+>[<<]",
+			expected: &ast.Program{
+				Expressions: []ast.Expression{
+					&ast.PointerMoveExpression{
+						Count: 2,
+						Expressions: []ast.Expression{
+							&ast.PointerIncrementExpression{Pos: 0},
+							&ast.PointerIncrementExpression{Pos: 1},
+						},
+					},
+					&ast.ValueChangeExpression{
+						Count: 1,
+						Expressions: []ast.Expression{
+							&ast.ValueIncrementExpression{Pos: 2},
+						},
+					},
+					&ast.PointerMoveExpression{
+						Count: 1,
+						Expressions: []ast.Expression{
+							&ast.PointerIncrementExpression{Pos:3},
+						},
+					},&ast.ValueChangeExpression{
+						Count: 1,
+						Expressions: []ast.Expression{
+							&ast.ValueIncrementExpression{Pos: 4},
+						},
+					},
+					&ast.PointerMoveExpression{
+						Count: 1,
+						Expressions: []ast.Expression{
+							&ast.PointerIncrementExpression{Pos: 5},
+						},
+					},
+					&ast.ZeroSearchExpression{
+						StartPosition: 6,
+						EndPosition: 9,
+
+						SearchWindow: -2,
+					},
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {

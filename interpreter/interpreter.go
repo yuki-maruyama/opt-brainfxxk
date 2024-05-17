@@ -128,6 +128,19 @@ func (i *Interpreter) runExpression(ctx context.Context, expr ast.Expression) (i
 		i.Memory[i.Pointer] += byte(e.Count)
 	case *ast.ValueResetExpression:
 		i.Memory[i.Pointer] = 0
+	case *ast.ZeroSearchExpression:
+		for{
+			if i.Memory[i.Pointer] == 0{
+				break
+			}
+			i.Pointer += e.SearchWindow
+			if i.Pointer == len(i.Memory)-1 && i.Config.RaiseErrorOnOverflow {
+				return count, fmt.Errorf("%w: %d to pointer overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+			}
+			if i.Pointer == 0 && i.Config.RaiseErrorOnOverflow {
+				return count, fmt.Errorf("%w: %d to pointer underflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+			}
+		}
 	case *ast.OutputExpression:
 		if _, err := i.Config.Writer.Write([]byte{i.Memory[i.Pointer]}); err != nil {
 			return count, err

@@ -169,3 +169,41 @@ func (e *ValueResetExpression) Bytes() []byte {
 func (e *ValueResetExpression) String() string {
 	return string(e.Bytes())
 }
+
+type ZeroSearchExpression struct {
+	StartPosition int
+	EndPosition   int
+
+	SearchWindow  int
+}
+
+func (e *ZeroSearchExpression) StartPos() int {
+	return e.StartPos()
+}
+
+func (e *ZeroSearchExpression) EndPos() int {
+	return e.EndPos()
+}
+
+func (e *ZeroSearchExpression) Bytes() []byte {
+	b := []byte{'['}
+	if e.SearchWindow != 0 {
+		symbol := byte('>')
+		if e.SearchWindow < 0 {
+			symbol = '<'
+		}
+		count := e.SearchWindow
+		if count < 0 {
+			count = -count
+		}
+		for i := 0; i < count; i++ {
+			b = append(b, symbol)
+		}
+	}
+	b = append(b, ']')
+	return b
+}
+
+func (e *ZeroSearchExpression) String() string {
+	return string(e.Bytes())
+}
