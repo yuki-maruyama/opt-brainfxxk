@@ -20,11 +20,13 @@ func TestInterpreter(t *testing.T) {
 		source   string
 		input    string
 		expected string
+		count    int
 	}{
 		{
 			source:   "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.",
 			input:    "",
 			expected: "Hello World!\n",
+			count:    380,
 		},
 		{
 			source: `
@@ -35,11 +37,13 @@ func TestInterpreter(t *testing.T) {
 +++++.+.<.>.--.`,
 			input:    "",
 			expected: "2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97",
+			count:    420,
 		},
 		{
 			source:   "+[>,.<]",
 			input:    "Hello",
 			expected: "Hello",
+			count:    1,
 		},
 		{
 			source: `
@@ -50,6 +54,7 @@ func TestInterpreter(t *testing.T) {
 >]>.<<<<<<<<<<<]`,
 			input:    "",
 			expected: makeFizzBuzz(100),
+			count:    11112,
 		},
 	}
 
@@ -62,12 +67,16 @@ func TestInterpreter(t *testing.T) {
 				Reader:     r,
 				MemorySize: 30000,
 			}
-			if err := interpreter.Run(ctx, strings.NewReader(tc.source), c); err != nil {
+			count, err := interpreter.Run(ctx, strings.NewReader(tc.source), c)
+			if err != nil {
 				t.Fatal(err)
 			}
 
 			if w.String() != tc.expected {
-				t.Errorf("got: %v, expected: %v", w.String(), tc.expected)
+				t.Errorf("output: got: %v, expected: %v", w.String(), tc.expected)
+			}
+			if count != tc.count {
+				t.Errorf("count: got: %v, expected: %v", count, tc.count)
 			}
 		})
 	}
@@ -94,7 +103,7 @@ func TestInterpreterInfinityRead(t *testing.T) {
 		MemorySize: 30000,
 	}
 
-	err := interpreter.Run(ctx, strings.NewReader(source), c)
+	_, err := interpreter.Run(ctx, strings.NewReader(source), c)
 	if !errors.Is(err, context.DeadlineExceeded) {
 		t.Errorf("got: %v, expected: %v", err, context.DeadlineExceeded)
 	}

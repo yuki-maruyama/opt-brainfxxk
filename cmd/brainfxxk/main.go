@@ -55,7 +55,9 @@ func main() {
 		fmt.Printf("\nelapsed: %v", time.Since(before))
 	}()
 
-	if err := interpreter.Run(ctx, source, config); err != nil {
+	if count, err := interpreter.Run(ctx, source, config); err != nil {
 		log.Fatal(err)
+	} else {
+		fmt.Println("Count: ", count)
 	}
 }

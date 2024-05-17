@@ -23,10 +23,10 @@ type Interpreter struct {
 	Pointer int
 }
 
-func Run(ctx context.Context, s io.Reader, c *Config) error {
+func Run(ctx context.Context, s io.Reader, c *Config) (int, error) {
 	p, err := parser.Parse(s)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	return NewInterpreter(p, c).Run(ctx)
@@ -41,81 +41,87 @@ func NewInterpreter(p *ast.Program, c *Config) *Interpreter {
 	}
 }
 
-func (i *Interpreter) Run(ctx context.Context) error {
+func (i *Interpreter) Run(ctx context.Context) (int, error) {
 	p, err := optimizer.NewOptimizer().Optimize(i.Program)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	err = i.runExpressions(ctx, p.Expressions)
+	count, err := i.runExpressions(ctx, p.Expressions)
 	if errors.Is(err, ErrInputFinished) && !i.Config.RaiseErrorOnEOF {
-		return nil
+		return count, nil
 	}
-	return err
-
+	return count, err
 }
 
-func (i *Interpreter) runExpressions(ctx context.Context, exprs []ast.Expression) error {
+func (i *Interpreter) runExpressions(ctx context.Context, exprs []ast.Expression) (int, error) {
+	count := 0
 	for _, expr := range exprs {
-		if err := i.runExpression(ctx, expr); err != nil {
-			return err
+		exprCount, err := i.runExpression(ctx, expr)
+		if err != nil {
+			return count, err
 		}
+		count += exprCount
 	}
-	return nil
+	return count, nil
 }
 
-func (i *Interpreter) runExpression(ctx context.Context, expr ast.Expression) error {
+func (i *Interpreter) runExpression(ctx context.Context, expr ast.Expression) (int, error) {
 	select {
 	case <-ctx.Done():
-		return ctx.Err()
+		return 0, ctx.Err()
 	default:
 	}
+
+	count := 1
 
 	switch e := expr.(type) {
 	case *ast.PointerIncrementExpression:
 		if i.Pointer == len(i.Memory)-1 && i.Config.RaiseErrorOnOverflow {
-			return fmt.Errorf("%w: %d to pointer overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+			return count, fmt.Errorf("%w: %d to pointer overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
 		}
 		i.Pointer += 1
 	case *ast.MultiplePointerIncrementExpression:
 		if i.Pointer == len(i.Memory)-1 && i.Config.RaiseErrorOnOverflow {
-			return fmt.Errorf("%w: %d to pointer overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+			return count, fmt.Errorf("%w: %d to pointer overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
 		}
 		i.Pointer += e.Count
 	case *ast.PointerDecrementExpression:
 		if i.Pointer == 0 && i.Config.RaiseErrorOnOverflow {
-			return fmt.Errorf("%w: %d to pointer underflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+			return count, fmt.Errorf("%w: %d to pointer underflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
 		}
 		i.Pointer -= 1
 	case *ast.ValueIncrementExpression:
 		if i.Memory[i.Pointer] == 255 && i.Config.RaiseErrorOnOverflow {
-			return fmt.Errorf("%w: %d to memory overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+			return count, fmt.Errorf("%w: %d to memory overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
 		}
 		i.Memory[i.Pointer] += 1
 	case *ast.ValueDecrementExpression:
 		if i.Memory[i.Pointer] == 0 && i.Config.RaiseErrorOnOverflow {
-			return fmt.Errorf("%w: %d to memory underflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+			return count, fmt.Errorf("%w: %d to memory underflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
 		}
 		i.Memory[i.Pointer] -= 1
 	case *ast.OutputExpression:
 		if _, err := i.Config.Writer.Write([]byte{i.Memory[i.Pointer]}); err != nil {
-			return err
+			return count, err
 		}
 	case *ast.InputExpression:
 		b := make([]byte, 1)
 		if _, err := i.Config.Reader.Read(b); err != nil {
 			if errors.Is(err, io.EOF) {
-				return ErrInputFinished
+				return count, ErrInputFinished
 			}
-			return err
+			return count, err
 		}
 		i.Memory[i.Pointer] = b[0]
 	case *ast.WhileExpression:
 		for i.Memory[i.Pointer] != 0 {
-			if err := i.runExpressions(ctx, e.Body); err != nil {
-				return err
+			bodyCount, err := i.runExpressions(ctx, e.Body)
+			if err != nil {
+				return count, err
 			}
+			count += bodyCount
 		}
 	}
-	return nil
+	return count, nil
 }
