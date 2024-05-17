@@ -47,6 +47,11 @@ func (i *Interpreter) Run(ctx context.Context) (int, error) {
 		return 0, err
 	}
 
+	if i.Config.AstInfo {
+		ast.PrintASTList(p.Expressions)
+		return 0, nil
+	}
+
 	count, err := i.runExpressions(ctx, p.Expressions)
 	if errors.Is(err, ErrInputFinished) && !i.Config.RaiseErrorOnEOF {
 		return count, nil

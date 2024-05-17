@@ -10,4 +10,5 @@ type Config struct {
 	MemorySize           int
 	RaiseErrorOnOverflow bool
 	RaiseErrorOnEOF      bool
+	AstInfo              bool
 }

@@ -19,6 +19,7 @@ var (
 		MemorySize:           30000,
 		RaiseErrorOnOverflow: false,
 		RaiseErrorOnEOF:      false,
+		AstInfo:              false,
 	}
 )
 
@@ -31,6 +32,7 @@ func init() {
 	flag.IntVar(&config.MemorySize, "memory-size", config.MemorySize, "memory size")
 	flag.BoolVar(&config.RaiseErrorOnOverflow, "raise-error-on-overflow", config.RaiseErrorOnOverflow, "raise error on overflow")
 	flag.BoolVar(&config.RaiseErrorOnEOF, "raise-error-on-eof", config.RaiseErrorOnEOF, "raise error on eof")
+	flag.BoolVar(&config.AstInfo, "ast-info", config.AstInfo, "show ast info")
 }
 
 func main() {
