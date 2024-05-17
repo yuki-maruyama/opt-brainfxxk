@@ -50,6 +50,31 @@ func (e *MultiplePointerDecrementExpression) String() string {
 	return string(e.Bytes())
 }
 
+type PointerMoveExpression struct {
+	Count       int
+	Expressions []Expression
+}
+
+func (e *PointerMoveExpression) StartPos() int {
+	return e.Expressions[0].StartPos()
+}
+
+func (e *PointerMoveExpression) EndPos() int {
+	return e.Expressions[len(e.Expressions)-1].EndPos()
+}
+
+func (e *PointerMoveExpression) Bytes() []byte {
+	b := []byte{}
+	for _, expr := range e.Expressions {
+		b = append(b, expr.Bytes()...)
+	}
+	return b
+}
+
+func (e *PointerMoveExpression) String() string {
+	return string(e.Bytes())
+}
+
 type MultipleValueIncrementExpression struct {
 	Count       int
 	Expressions []Expression

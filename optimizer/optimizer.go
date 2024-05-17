@@ -33,29 +33,29 @@ func (o *Optimizer) optimizeExpressions(exprs []ast.Expression) ([]ast.Expressio
 		switch optExpr.(type) {
 		case *ast.PointerIncrementExpression:
 			if len(optimized) > 0 {
-				if last, ok := optimized[len(optimized)-1].(*ast.MultiplePointerIncrementExpression); ok {
+				if last, ok := optimized[len(optimized)-1].(*ast.PointerMoveExpression); ok {
 					last.Count += 1
 					last.Expressions = append(last.Expressions, optExpr)
 					continue
 				}
 			}
 
-			optExpr = &ast.MultiplePointerIncrementExpression{
+			optExpr = &ast.PointerMoveExpression{
 				Count:       1,
 				Expressions: []ast.Expression{optExpr},
 			}
 		
 		case *ast.PointerDecrementExpression:
 			if len(optimized) > 0 {
-				if last, ok := optimized[len(optimized)-1].(*ast.MultiplePointerDecrementExpression); ok {
-					last.Count += 1
+				if last, ok := optimized[len(optimized)-1].(*ast.PointerMoveExpression); ok {
+					last.Count -= 1
 					last.Expressions = append(last.Expressions, optExpr)
 					continue
 				}
 			}
 
-			optExpr = &ast.MultiplePointerDecrementExpression{
-				Count:       1,
+			optExpr = &ast.PointerMoveExpression{
+				Count:       -1,
 				Expressions: []ast.Expression{optExpr},
 			}
 
