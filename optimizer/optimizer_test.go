@@ -16,7 +16,7 @@ func TestOptimizer(t *testing.T) {
 		expected *ast.Program
 	}{
 		{
-			source:  "+++++----->>>>><<<<<",
+			source: "+++++----->>>>><<<<<",
 			expected: &ast.Program{
 				Expressions: []ast.Expression{
 					&ast.ValueChangeExpression{
@@ -52,6 +52,24 @@ func TestOptimizer(t *testing.T) {
 				},
 			},
 		},
+		{
+			source: "+++++[-]",
+			expected: &ast.Program{
+				Expressions: []ast.Expression{
+					&ast.ValueChangeExpression{
+						Count: 5,
+						Expressions: []ast.Expression{
+							&ast.ValueIncrementExpression{Pos: 0},
+							&ast.ValueIncrementExpression{Pos: 1},
+							&ast.ValueIncrementExpression{Pos: 2},
+							&ast.ValueIncrementExpression{Pos: 3},
+							&ast.ValueIncrementExpression{Pos: 4},
+						},
+					},
+					&ast.ValueResetExpression{Pos: 5},
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {
@@ -72,7 +90,7 @@ func TestOptimizer(t *testing.T) {
 			}
 
 			if !reflect.DeepEqual(prog, tc.expected) {
-				t.Errorf("got: %v, expected: %v", prog, tc.expected)
+				t.Errorf("got: %#v, expected: %#v", prog, tc.expected)
 			}
 		})
 	}

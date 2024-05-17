@@ -54,7 +54,7 @@ func TestInterpreter(t *testing.T) {
 >]>.<<<<<<<<<<<]`,
 			input:    "",
 			expected: makeFizzBuzz(100),
-			count:    6152,
+			count:    6099,
 		},
 	}
 

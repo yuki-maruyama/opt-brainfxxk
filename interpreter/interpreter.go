@@ -126,6 +126,8 @@ func (i *Interpreter) runExpression(ctx context.Context, expr ast.Expression) (i
 			return count, fmt.Errorf("%w: %d to memory overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
 		}
 		i.Memory[i.Pointer] += byte(e.Count)
+	case *ast.ValueResetExpression:
+		i.Memory[i.Pointer] = 0
 	case *ast.OutputExpression:
 		if _, err := i.Config.Writer.Write([]byte{i.Memory[i.Pointer]}); err != nil {
 			return count, err

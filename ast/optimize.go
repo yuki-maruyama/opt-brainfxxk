@@ -149,3 +149,23 @@ func (e *ValueChangeExpression) Bytes() []byte {
 func (e *ValueChangeExpression) String() string {
 	return string(e.Bytes())
 }
+
+type ValueResetExpression struct {
+	Pos int
+}
+
+func (e *ValueResetExpression) StartPos() int {
+	return e.Pos
+}
+
+func (e *ValueResetExpression) EndPos() int {
+	return e.Pos + 3
+}
+
+func (e *ValueResetExpression) Bytes() []byte {
+	return []byte{'[', '-', ']'}
+}
+
+func (e *ValueResetExpression) String() string {
+	return string(e.Bytes())
+}

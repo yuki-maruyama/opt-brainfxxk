@@ -1,6 +1,8 @@
 package optimizer
 
-import "github.com/rosylilly/brainfxxk/ast"
+import (
+	"github.com/rosylilly/brainfxxk/ast"
+)
 
 type Optimizer struct {
 }
@@ -87,6 +89,15 @@ func (o *Optimizer) optimizeExpressions(exprs []ast.Expression) ([]ast.Expressio
 			}
 
 		case *ast.WhileExpression:
+			if len(optExpr.(*ast.WhileExpression).Body) == 1{
+				switch optExpr.(*ast.WhileExpression).Body[0].(type){
+				case *ast.ValueDecrementExpression:
+					optExpr = &ast.ValueResetExpression{Pos: optExpr.(*ast.WhileExpression).StartPos()}
+				default:
+				}
+				break
+			}
+
 			opBody, err := o.optimizeExpressions(optExpr.(*ast.WhileExpression).Body)
 			if err != nil {
 				return nil, err
