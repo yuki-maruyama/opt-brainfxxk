@@ -19,46 +19,10 @@ func TestOptimizer(t *testing.T) {
 			source:  "+++++----->>>>><<<<<",
 			expected: &ast.Program{
 				Expressions: []ast.Expression{
-					&ast.MultipleValueIncrementExpression{
-						Count: 5,
-						Expressions: []ast.Expression{
-							&ast.ValueIncrementExpression{Pos: 0},
-							&ast.ValueIncrementExpression{Pos: 1},
-							&ast.ValueIncrementExpression{Pos: 2},
-							&ast.ValueIncrementExpression{Pos: 3},
-							&ast.ValueIncrementExpression{Pos: 4},
-						},
-					},
-					&ast.MultipleValueDecrementExpression{
-						Count: 5,
-						Expressions: []ast.Expression{
-							&ast.ValueDecrementExpression{Pos: 5},
-							&ast.ValueDecrementExpression{Pos: 6},
-							&ast.ValueDecrementExpression{Pos: 7},
-							&ast.ValueDecrementExpression{Pos: 8},
-							&ast.ValueDecrementExpression{Pos: 9},
-						},
-					},
-					&ast.MultiplePointerIncrementExpression{
-						Count: 5,
-						Expressions: []ast.Expression{
-							&ast.PointerIncrementExpression{Pos: 10},
-							&ast.PointerIncrementExpression{Pos: 11},
-							&ast.PointerIncrementExpression{Pos: 12},
-							&ast.PointerIncrementExpression{Pos: 13},
-							&ast.PointerIncrementExpression{Pos: 14},
-						},
-					},
-					&ast.MultiplePointerDecrementExpression{
-						Count: 5,
-						Expressions: []ast.Expression{
-							&ast.PointerDecrementExpression{Pos: 15},
-							&ast.PointerDecrementExpression{Pos: 16},
-							&ast.PointerDecrementExpression{Pos: 17},
-							&ast.PointerDecrementExpression{Pos: 18},
-							&ast.PointerDecrementExpression{Pos: 19},
-						},
-					},
+					&ast.MultipleValueIncrementExpression{Count: 5},
+					&ast.MultipleValueDecrementExpression{Count: 5},
+					&ast.MultiplePointerIncrementExpression{Count: 5},
+					&ast.MultiplePointerDecrementExpression{Count: 5},
 				},
 			},
 		},
