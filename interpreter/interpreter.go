@@ -77,6 +77,11 @@ func (i *Interpreter) runExpression(ctx context.Context, expr ast.Expression) er
 			return fmt.Errorf("%w: %d to pointer overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
 		}
 		i.Pointer += 1
+	case *ast.MultiplePointerIncrementExpression:
+		if i.Pointer == len(i.Memory)-1 && i.Config.RaiseErrorOnOverflow {
+			return fmt.Errorf("%w: %d to pointer overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+		}
+		i.Pointer += e.Count
 	case *ast.PointerDecrementExpression:
 		if i.Pointer == 0 && i.Config.RaiseErrorOnOverflow {
 			return fmt.Errorf("%w: %d to pointer underflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
