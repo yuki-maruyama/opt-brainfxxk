@@ -90,9 +90,9 @@ func TestOptimizer(t *testing.T) {
 					&ast.PointerMoveExpression{
 						Count: 1,
 						Expressions: []ast.Expression{
-							&ast.PointerIncrementExpression{Pos:3},
+							&ast.PointerIncrementExpression{Pos: 3},
 						},
-					},&ast.ValueChangeExpression{
+					}, &ast.ValueChangeExpression{
 						Count: 1,
 						Expressions: []ast.Expression{
 							&ast.ValueIncrementExpression{Pos: 4},
@@ -106,7 +106,7 @@ func TestOptimizer(t *testing.T) {
 					},
 					&ast.ZeroSearchExpression{
 						StartPosition: 6,
-						EndPosition: 9,
+						EndPosition:   9,
 
 						SearchWindow: -2,
 					},

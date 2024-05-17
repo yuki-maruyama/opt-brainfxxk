@@ -134,8 +134,8 @@ func (i *Interpreter) runExpression(ctx context.Context, expr ast.Expression) (i
 	case *ast.ValueResetExpression:
 		i.Memory[i.Pointer] = 0
 	case *ast.ZeroSearchExpression:
-		for{
-			if i.Memory[i.Pointer] == 0{
+		for {
+			if i.Memory[i.Pointer] == 0 {
 				break
 			}
 			i.Pointer += e.SearchWindow

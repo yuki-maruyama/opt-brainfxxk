@@ -174,7 +174,7 @@ type ZeroSearchExpression struct {
 	StartPosition int
 	EndPosition   int
 
-	SearchWindow  int
+	SearchWindow int
 }
 
 func (e *ZeroSearchExpression) StartPos() int {
