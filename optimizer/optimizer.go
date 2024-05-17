@@ -120,7 +120,9 @@ func (o *Optimizer) optimizeExpressions(exprs []ast.Expression) ([]ast.Expressio
 			}
 		}
 
-		optimized = append(optimized, optExpr)
+		if _, ok := optExpr.(*ast.Comment); !ok {
+			optimized = append(optimized, optExpr)
+		}
 	}
 
 	return optimized, nil
