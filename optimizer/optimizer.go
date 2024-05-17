@@ -44,7 +44,7 @@ func (o *Optimizer) optimizeExpressions(exprs []ast.Expression) ([]ast.Expressio
 				Count:       1,
 				Expressions: []ast.Expression{optExpr},
 			}
-		
+
 		case *ast.PointerDecrementExpression:
 			if len(optimized) > 0 {
 				if last, ok := optimized[len(optimized)-1].(*ast.PointerMoveExpression); ok {
@@ -85,6 +85,13 @@ func (o *Optimizer) optimizeExpressions(exprs []ast.Expression) ([]ast.Expressio
 				Count:       -1,
 				Expressions: []ast.Expression{optExpr},
 			}
+
+		case *ast.WhileExpression:
+			opBody, err := o.optimizeExpressions(optExpr.(*ast.WhileExpression).Body)
+			if err != nil {
+				return nil, err
+			}
+			optExpr.(*ast.WhileExpression).Body = opBody
 		}
 
 		optimized = append(optimized, optExpr)
