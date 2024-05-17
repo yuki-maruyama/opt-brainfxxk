@@ -91,6 +91,11 @@ func (i *Interpreter) runExpression(ctx context.Context, expr ast.Expression) (i
 			return count, fmt.Errorf("%w: %d to pointer underflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
 		}
 		i.Pointer -= 1
+	case *ast.MultiplePointerDecrementExpression:
+		if i.Pointer == len(i.Memory)-1 && i.Config.RaiseErrorOnOverflow {
+			return count, fmt.Errorf("%w: %d to pointer overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())
+		}
+		i.Pointer -= e.Count
 	case *ast.ValueIncrementExpression:
 		if i.Memory[i.Pointer] == 255 && i.Config.RaiseErrorOnOverflow {
 			return count, fmt.Errorf("%w: %d to memory overflow, on %d:%d", ErrMemoryOverflow, i.Pointer, e.StartPos(), e.EndPos())

@@ -26,7 +26,7 @@ func TestInterpreter(t *testing.T) {
 			source:   "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.",
 			input:    "",
 			expected: "Hello World!\n",
-			count:    380,
+			count:    379,
 		},
 		{
 			source: `
@@ -54,7 +54,7 @@ func TestInterpreter(t *testing.T) {
 >]>.<<<<<<<<<<<]`,
 			input:    "",
 			expected: makeFizzBuzz(100),
-			count:    11112,
+			count:    11103,
 		},
 	}
 
